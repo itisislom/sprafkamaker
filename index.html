@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tibbiy Ma'lumotnoma</title>
+    <title>Редактор Tibbiy Ma'lumotnoma</title>
     <style>
         * {
             margin: 0;
@@ -13,8 +13,95 @@
 
         body {
             font-family: Arial, sans-serif;
-            background-color: #f5f5f5;
+            background-color: #e8f4f8;
             padding: 20px;
+        }
+
+        .editor-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 20px;
+        }
+
+        .editor-panel {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            height: fit-content;
+            position: sticky;
+            top: 20px;
+        }
+
+        .editor-panel h2 {
+            margin-bottom: 20px;
+            color: #2563eb;
+            font-size: 18px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 12px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 60px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+
+        .btn-primary {
+            background: #2563eb;
+            color: white;
+        }
+
+        .btn-success {
+            background: #10b981;
+            color: white;
+        }
+
+        .btn-warning {
+            background: #f59e0b;
+            color: white;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+
+        .preview-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
 
         .container {
@@ -59,12 +146,6 @@
             font-weight: bold;
             margin-bottom: 10px;
             line-height: 1.4;
-        }
-
-        .doc-number {
-            font-size: 14px;
-            font-weight: bold;
-            margin-top: 5px;
         }
 
         .facility-name {
@@ -135,16 +216,304 @@
             font-weight: bold;
         }
 
-        .qr-code {
+        .qr-placeholder {
             width: 120px;
             height: 120px;
+            background: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: #666;
+            text-align: center;
+            padding: 10px;
         }
-        
-        .qr-code img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
+
+        .button-group {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 2px solid #e5e7eb;
         }
+    </style>
+</head>
+<body>
+    <div class="editor-container">
+        <div class="editor-panel">
+            <h2>✏️ Редактор данных</h2>
+            
+            <div class="form-group">
+                <label>FISh (ФИО):</label>
+                <input type="text" id="fish" value="ISM FAMILIYA O'CHESTVA">
+            </div>
+
+            <div class="form-group">
+                <label>JShShIR (ПИНФЛ):</label>
+                <input type="text" id="jshshir" value="PINFL (JSHSHIRINGIZ)">
+            </div>
+
+            <div class="form-group">
+                <label>Yoshi (Возраст):</label>
+                <input type="text" id="age" value="Yoshingiz">
+            </div>
+
+            <div class="form-group">
+                <label>Ro'yhatga olingan sana:</label>
+                <input type="text" id="reg_date" value="xx.xx.xxxx">
+            </div>
+
+            <div class="form-group">
+                <label>Hujjat №:</label>
+                <input type="text" id="doc_number" value="XXXX XXXXXXXXX">
+            </div>
+
+            <div class="form-group">
+                <label>Ishdan ozod etilgan kunlar:</label>
+                <input type="text" id="sick_days" value="xx.xx.xxxx - xx.xx.xxxx">
+            </div>
+
+            <div class="form-group">
+                <label>Muassasa nomi:</label>
+                <input type="text" id="institution" value="Maktab yoki ish joyini nomi">
+            </div>
+
+            <div class="form-group">
+                <label>Yaratish sanasi:</label>
+                <input type="text" id="creation_date" value="14.10.2025 12:36">
+            </div>
+
+            <div class="form-group">
+                <label>Doc ID (большие цифры):</label>
+                <input type="text" id="doc_id_large" value="XXXX">
+            </div>
+
+            <div class="form-group">
+                <label>Hujjat ID:</label>
+                <input type="text" id="hujjat_id" value="3e9c-fb42-7d61-a8c5-1b4e-9f23-dc70-5a9b">
+            </div>
+
+            <button class="btn btn-warning" onclick="randomizeHujjatId()">🎲 Генерировать ID</button>
+
+            <div class="button-group">
+                <button class="btn btn-primary" onclick="updatePreview()">🔄 Обновить</button>
+                <button class="btn btn-success" onclick="downloadDocument()">💾 Скачать</button>
+            </div>
+        </div>
+
+        <div class="preview-container">
+            <h2 style="margin-bottom: 20px; color: #2563eb;">👁️ Предварительный просмотр</h2>
+            <div id="document-preview">
+                <div class="container">
+                    <div class="header">
+                        <div class="header-text">
+                            <p><strong>O'zbekiston Respublikasi Sog'liqni</strong></p>
+                            <p><strong>saqlash vazirligi</strong></p>
+                            <p style="margin-top: 10px;">Семейная поликлиника № 4 Ангрен</p>
+                        </div>
+                        <div class="logo">
+                            <img src="uzbekistonrespublika.png" alt="Logo">
+                        </div>
+                    </div>
+
+                    <div class="title-section">
+                        <h1>Ta'lim olayotgan shaxslar uchun mehnatga layoqatsizlik ma'lumotnomasi<br>
+                        Ro'yhatga olingan sana: <span id="preview_reg_date">08.10.2025</span><br>
+                        No <span id="preview_doc_number">XXXX XXXXXXXXX</span></h1>
+                    </div>
+
+                    <div class="facility-name">
+                        Tibbiy muassasa nomi: <strong>Семейная поликлиника № 4 Ангрен</strong><br>
+                        <span style="font-size: 11px; font-weight: normal;">(qaysi muassasa tomonidan berilgan)</span>
+                    </div>
+
+                    <table>
+                        <tr>
+                            <td class="cell-number">1</td>
+                            <td class="cell-content">
+                                <strong>Vaqtincha mehnatga layoqatsiz fuqaro haqidagi ma'lumotlar:</strong><br>
+                                FISh: <span id="preview_fish">ISM FAMILIYA O'CHESTVA</span><br>
+                                Jinsi: erkak<br>
+                                JShShIR: <span id="preview_jshshir">PINF (JSHSHIRINGIZ)</span><br>
+                                Yoshi: <span id="preview_age">Yoshingiz</span> yosh<br>
+                                Bemorga qarindoshligi:
+                            </td>
+                            <td class="cell-number">1a</td>
+                            <td class="cell-content">
+                                <strong>Bemor bola haqidagi ma'lumotlar:</strong><br>
+                                FISh: -<br>
+                                Jinsi: -<br>
+                                JShShIR: -<br>
+                                Yoshi: - yosh
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="cell-number">2</td>
+                            <td class="cell-content">Yashash manzili:</td>
+                            <td class="cell-number">3</td>
+                            <td class="cell-content">Ish/o`qish joyi:</td>
+                        </tr>
+                        <tr>
+                            <td class="cell-number">4</td>
+                            <td class="cell-content">
+                                <strong>Biriktirilgan tibbiy muassasa:</strong><br>
+                                Семейная поликлиника № 4 Ангрен
+                            </td>
+                            <td class="cell-number">5</td>
+                            <td class="cell-content">
+                                <strong>Mehnatga layoqatsizlik sababi:</strong><br>
+                                Kasallik
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="cell-number">6</td>
+                            <td class="cell-content">
+                                <strong>Tashxis (KXT-10 kodi va Nomi):</strong><br>
+                                J00: Откир назофарингит [тумов]
+                            </td>
+                            <td class="cell-number">7</td>
+                            <td class="cell-content">
+                                <strong>Davolovchi shifokor FISH:</strong> BO'RIYEV M.SH.<br>
+                                <strong>Bo'lim boshlig'i (mas'ul shaxs) FISH:</strong><br>
+                                BAYZAKOVA N.N.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="cell-number">8</td>
+                            <td class="cell-content">
+                                <strong>Yakuniy tashxis (Nomi va KXT-10 kodi):</strong><br>
+                                J00: Откир назофарингит [тумов]
+                            </td>
+                            <td class="cell-number">9</td>
+                            <td class="cell-content">
+                                <strong>VMK raisining FISH:</strong> VAFAYEVA D.R.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="cell-number">10</td>
+                            <td class="cell-content">
+                                <strong>Yuqumli kasallikka chalingan bemor bilan kontaktda bo'lganligi haqidagi ma'lumotlar:</strong><br>
+                                Yo'q
+                            </td>
+                            <td class="cell-number">11</td>
+                            <td class="cell-content">
+                                <strong>TIEK ma'lumotlari:</strong><br>
+                                Ko'rikdan o'tgan sanasi:<br>
+                                Xulosa:<br>
+                                TIEK raisi FISH:
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="cell-number">12</td>
+                            <td class="cell-content">
+                                Tartib: Ambulator<br>
+                                Tartib buzilganlik to'g'risida qaydlar: -
+                            </td>
+                            <td class="cell-number">13</td>
+                            <td class="cell-content">
+                                <strong>Ishdan (Maktabdan) ozod etilgan kunlar:</strong><br>
+                                <span id="preview_sick_days">xx.xx.xxxx - xx.xx.xxxx</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="cell-number">14</td>
+                            <td class="cell-content">
+                                Vaqtincha boshqa ishga o'tkazilsin: Yo'q
+                            </td>
+                            <td class="cell-number">15</td>
+                            <td class="cell-content">
+                                <strong>Boshqa shahardan kelgan bemorga mehnatga layoqatsizlik varaqasini berish uchun ruhsat etiladi:</strong> Yo'q
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="cell-number">16</td>
+                            <td class="cell-content">
+                                <strong>Ushbu ma'lumotnoma berilgan muassasa:</strong><br>
+                                Maktab
+                            </td>
+                            <td class="cell-number">17</td>
+                            <td class="cell-content">
+                                <strong>Muassasa nomi:</strong> <span id="preview_institution">Maktab yoki ish joyini Nomi</span>
+                            </td>
+                        </tr>
+                    </table>
+
+                    <div class="footer">
+                        <div class="footer-left">
+                            <div class="dmed-logo">
+                                <img src="dmed.png" alt="DMED">
+                            </div>
+                            <div class="footer-info">
+                                Hujjat DMED Yagona tibbiy axborot tizimida yaratilgan. Hujjatning haqqoniyligini<br>
+                                https://docs.dmed.uz saytida hujjatning ID kodini kiritish, yoki QR-kod orqali<br>
+                                tekshirish mumkin<br><br>
+                                <strong>Hujjat ID:</strong> <span id="preview_hujjat_id">3e9c-fb42-7d61-a8c5-1b4e-9f23-dc70-5a9b</span><br>
+                                <strong>Yaratish sanasi:</strong> <span id="preview_creation_date">xx.xx.xxxx 00:00</span>
+                            </div>
+                        </div>
+                        <div class="footer-right">
+                            <div class="doc-id" id="preview_doc_id_large">XXXX</div>
+                            <div class="qr-placeholder">QR код<br>(не требуется)</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function updatePreview() {
+            document.getElementById('preview_fish').textContent = document.getElementById('fish').value;
+            document.getElementById('preview_jshshir').textContent = document.getElementById('jshshir').value;
+            document.getElementById('preview_age').textContent = document.getElementById('age').value;
+            document.getElementById('preview_reg_date').textContent = document.getElementById('reg_date').value;
+            document.getElementById('preview_doc_number').textContent = document.getElementById('doc_number').value;
+            document.getElementById('preview_sick_days').textContent = document.getElementById('sick_days').value;
+            document.getElementById('preview_institution').textContent = document.getElementById('institution').value;
+            document.getElementById('preview_creation_date').textContent = document.getElementById('creation_date').value;
+            document.getElementById('preview_doc_id_large').textContent = document.getElementById('doc_id_large').value;
+            document.getElementById('preview_hujjat_id').textContent = document.getElementById('hujjat_id').value;
+        }
+
+        function randomizeHujjatId() {
+            const segments = [];
+            for (let i = 0; i < 8; i++) {
+                const segment = Math.floor(Math.random() * 0xFFFF).toString(16).padStart(4, '0');
+                segments.push(segment);
+            }
+            const newId = segments.join('-');
+            document.getElementById('hujjat_id').value = newId;
+            updatePreview();
+        }
+
+        function downloadDocument() {
+            const fullHtml = `<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tibbiy Ma'lumotnoma</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background-color: #f5f5f5; padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; background-color: white; padding: 40px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        .header { text-align: center; margin-bottom: 30px; }
+        .header-text { font-size: 12px; line-height: 1.6; text-align: left; margin-bottom: 15px; }
+        .logo { width: 80px; height: 80px; margin: 0 auto; }
+        .logo img { width: 100%; height: 100%; object-fit: contain; }
+        .title-section { text-align: center; margin-bottom: 30px; }
+        .title-section h1 { font-size: 16px; font-weight: bold; margin-bottom: 10px; line-height: 1.4; }
+        .facility-name { text-align: center; font-size: 13px; margin-bottom: 30px; font-weight: 600; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 30px; }
+        td { border: 1px solid #000; padding: 10px; font-size: 11px; vertical-align: top; }
+        .cell-number { width: 40px; text-align: center; font-weight: bold; }
+        .cell-content { line-height: 1.6; }
+        .footer { display: flex; justify-content: space-between; align-items: flex-end; margin-top: 30px; }
+        .dmed-logo { height: 40px; }
+        .dmed-logo img { height: 100%; object-fit: contain; }
+        .footer-left { flex: 1; }
+        .footer-info { font-size: 10px; line-height: 1.6; margin-top: 15px; }
+        .footer-right { text-align: right; display: flex; align-items: center; gap: 15px; }
+        .doc-id { font-size: 48px; font-weight: bold; }
+        .qr-placeholder { width: 120px; height: 120px; background: #f0f0f0; display: flex; align-items: center; justify-content: center; font-size: 12px; color: #666; text-align: center; padding: 10px; }
     </style>
 </head>
 <body>
@@ -162,8 +531,8 @@
 
         <div class="title-section">
             <h1>Ta'lim olayotgan shaxslar uchun mehnatga layoqatsizlik ma'lumotnomasi<br>
-            Ro'yhatga olingan sana: 08.10.2025<br>
-            No 12TB 000978692</h1>
+            Ro'yhatga olingan sana: ${document.getElementById('reg_date').value}<br>
+            No ${document.getElementById('doc_number').value}</h1>
         </div>
 
         <div class="facility-name">
@@ -176,10 +545,10 @@
                 <td class="cell-number">1</td>
                 <td class="cell-content">
                     <strong>Vaqtincha mehnatga layoqatsiz fuqaro haqidagi ma'lumotlar:</strong><br>
-                    FISh: BEKMURATOV ISKANDAR JAMSHIDOVICH<br>
+                    FISh: ${document.getElementById('fish').value}<br>
                     Jinsi: erkak<br>
-                    JShShIR: 52211086840041<br>
-                    Yoshi: 17 yosh<br>
+                    JShShIR: ${document.getElementById('jshshir').value}<br>
+                    Yoshi: ${document.getElementById('age').value} yosh<br>
                     Bemorga qarindoshligi:
                 </td>
                 <td class="cell-number">1a</td>
@@ -195,7 +564,7 @@
                 <td class="cell-number">2</td>
                 <td class="cell-content">Yashash manzili:</td>
                 <td class="cell-number">3</td>
-                <td class="cell-content">Ish/o`qish joyi:</td>
+                <td class="cell-content">Ish/o\`qish joyi:</td>
             </tr>
             <tr>
                 <td class="cell-number">4</td>
@@ -213,7 +582,7 @@
                 <td class="cell-number">6</td>
                 <td class="cell-content">
                     <strong>Tashxis (KXT-10 kodi va Nomi):</strong><br>
-                    J00: Ўткир назофарингит [тумов]
+                    J00: Откир назофарингит [тумов]
                 </td>
                 <td class="cell-number">7</td>
                 <td class="cell-content">
@@ -226,7 +595,7 @@
                 <td class="cell-number">8</td>
                 <td class="cell-content">
                     <strong>Yakuniy tashxis (Nomi va KXT-10 kodi):</strong><br>
-                    J00: Ўткир назофарингит [тумов]
+                    J00: Откир назофарингит [тумов]
                 </td>
                 <td class="cell-number">9</td>
                 <td class="cell-content">
@@ -256,7 +625,7 @@
                 <td class="cell-number">13</td>
                 <td class="cell-content">
                     <strong>Ishdan ozod etilgan kunlar:</strong><br>
-                    08.10.2025 - 13.10.2025
+                    ${document.getElementById('sick_days').value}
                 </td>
             </tr>
             <tr>
@@ -277,7 +646,7 @@
                 </td>
                 <td class="cell-number">17</td>
                 <td class="cell-content">
-                    <strong>Muassasa nomi:</strong> 34-Maktab
+                    <strong>Muassasa nomi:</strong> ${document.getElementById('institution').value}
                 </td>
             </tr>
         </table>
@@ -291,17 +660,29 @@
                     Hujjat DMED Yagona tibbiy axborot tizimida yaratilgan. Hujjatning haqqoniyligini<br>
                     https://docs.dmed.uz saytida hujjatning ID kodini kiritish, yoki QR-kod orqali<br>
                     tekshirish mumkin<br><br>
-                    <strong>Hujjat ID:</strong> 3e9c-fb42-7d61-a8c5-1b4e-9f23-dc70-5a9b<br>
-                    <strong>Yaratish sanasi:</strong> 14.10.2025 12:36
+                    <strong>Hujjat ID:</strong> ${document.getElementById('hujjat_id').value}<br>
+                    <strong>Yaratish sanasi:</strong> ${document.getElementById('creation_date').value}
                 </div>
             </div>
             <div class="footer-right">
-                <div class="doc-id">3692</div>
-                <div class="qr-code">
-                    <img src="qr.png" alt="QR Code">
-                </div>
+                <div class="doc-id">${document.getElementById('doc_id_large').value}</div>
+                <div class="qr-placeholder">QR код<br>(не требуется)</div>
             </div>
         </div>
     </div>
+</body>
+</html>`;
+
+            const blob = new Blob([fullHtml], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'tibbiy_malumotnoma.html';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        updatePreview();
+    </script>
 </body>
 </html>
